@@ -38,6 +38,7 @@ func Begin(ctx context.Context, topic string) (newCtx context.Context) {
 	// 读取父级栈帧
 	parent, ok := readThis(ctx)
 	if !ok {
+		newCtx = ctx
 		return
 	}
 
