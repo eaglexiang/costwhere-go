@@ -12,36 +12,42 @@ import (
 
 func main() {
 	src := flag.String("if", "", "source file")
+	dst := flag.String("of", "flamegraph.svg", "output file")
 	flag.Parse()
 
 	if *src == "" {
 		fmt.Println("source file cannot be empty")
 		return
 	}
-	filename := *src
+	if *dst == "" {
+		fmt.Println("output file cannot be empty")
+		return
+	}
 
-	ext := filepath.Ext(filename)
+	srcFile := *src
+
+	ext := filepath.Ext(srcFile)
 
 	var err error
 	switch ext {
 	case ".json":
-		err = jsonDraw(filename)
+		err = jsonDraw(srcFile, *dst)
 	default:
-		err = defaultDraw(filename)
+		err = defaultDraw(srcFile, *dst)
 	}
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func defaultDraw(filename string) (err error) {
-	cmd := fmt.Sprintf("cat %s | flamegraph.pl > flamegraph.svg", filename)
+func defaultDraw(srcFile string, dstFile string) (err error) {
+	cmd := fmt.Sprintf("cat %s | flamegraph.pl > %s", srcFile, dstFile)
 	err = exec.Command("bash", "-c", cmd).Run()
 	return
 }
 
-func jsonDraw(filename string) (err error) {
-	buf, err := os.ReadFile(filename)
+func jsonDraw(srcFile string, dstFile string) (err error) {
+	buf, err := os.ReadFile(srcFile)
 	if err != nil {
 		return
 	}
@@ -58,7 +64,7 @@ func jsonDraw(filename string) (err error) {
 	}
 	defer os.Remove("tmp.log")
 
-	err = defaultDraw("tmp.log")
+	err = defaultDraw("tmp.log", dstFile)
 
 	return
 }
