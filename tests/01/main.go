@@ -48,6 +48,8 @@ func F2(ctx context.Context) {
 	defer costwhere.End(ctx)
 	time.Sleep(100 * time.Millisecond)
 	F3(ctx)
+	F3(ctx)
+	F3(ctx)
 }
 
 func F3(ctx context.Context) {
