@@ -1,3 +1,3 @@
-module costwhere
+module github.com/eaglexiang/costwhere-go
 
-go 1.21.3
+go 1.21

@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"context"
-	"costwhere"
 	"fmt"
 	"os"
 	"time"
+
+	"github.com/eaglexiang/costwhere-go"
 )
 
 func main() {
