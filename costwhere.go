@@ -34,11 +34,12 @@ func (s *CostWhere) End() (stacks []string) {
 }
 
 // StartStack 开始一个栈帧
-func Begin(ctx context.Context, topic string) (newCtx context.Context) {
+func Begin(ctx context.Context, topic string) (newCtx context.Context, end func()) {
 	// 读取父级栈帧
 	parent, ok := readThis(ctx)
 	if !ok {
 		newCtx = ctx
+		end = func() {}
 		return
 	}
 
@@ -48,11 +49,12 @@ func Begin(ctx context.Context, topic string) (newCtx context.Context) {
 
 	// 将本级栈帧写入 ctx
 	newCtx = writeThis(ctx, newLayer)
+	end = func() { endStack(newCtx) }
 
 	return
 }
 
-func End(ctx context.Context) {
+func endStack(ctx context.Context) {
 	// 读取栈帧
 	stackLayer, ok := readThis(ctx)
 	if !ok {
