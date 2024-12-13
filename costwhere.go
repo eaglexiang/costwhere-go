@@ -2,6 +2,9 @@ package costwhere
 
 import (
 	"context"
+	"encoding/json"
+
+	"github.com/pkg/errors"
 )
 
 func Init(ctx context.Context, topic string) (newCtx context.Context, s *CostWhere) {
@@ -25,6 +28,13 @@ func newCostWhere(root *StackLayer) *CostWhere {
 		Root: root,
 	}
 	return s
+}
+
+func (s *CostWhere) EndWithJSON() (j []byte, err error) {
+	stacks := s.End()
+	j, err = json.Marshal(stacks)
+	err = errors.WithStack(err)
+	return
 }
 
 func (s *CostWhere) End() (stacks []string) {
