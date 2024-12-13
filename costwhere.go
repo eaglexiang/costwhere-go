@@ -33,6 +33,16 @@ func (s *CostWhere) End() (stacks []string) {
 	return
 }
 
+func Mark(ctx *context.Context, topic string) (end func()) {
+	if ctx == nil {
+		end = func() {}
+		return
+	}
+	newCtx, end := Begin(*ctx, topic)
+	*ctx = newCtx
+	return
+}
+
 // StartStack 开始一个栈帧
 func Begin(ctx context.Context, topic string) (newCtx context.Context, end func()) {
 	// 读取父级栈帧
