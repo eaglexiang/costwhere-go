@@ -3,84 +3,69 @@ package costwhere
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/pkg/errors"
 )
 
-func Init(ctx context.Context, topic string) (newCtx context.Context, s *CostWhere) {
-	// 构造根帧
-	newLayer := newStackLayer(topic)
-	// 构造栈
-	s = newCostWhere(newLayer)
+func Init(ctx context.Context, topic string) (newCtx context.Context, c *CostWhere) {
+	costs := newCosts()
 
-	// 将栈帧写入 ctx
-	newCtx = writeThis(ctx, newLayer)
+	newCtx = writeThis(ctx, costs)
+
+	startAt := time.Now()
+	end := func() {
+		cost := time.Since(startAt)
+		costs.addCost(5, cost)
+	}
+	c = newCostWhere(costs, end)
 
 	return
 }
 
 type CostWhere struct {
-	Root *StackLayer
+	costs *Costs
+	end   func()
 }
 
-func newCostWhere(root *StackLayer) *CostWhere {
+func newCostWhere(costs *Costs, end func()) *CostWhere {
 	s := &CostWhere{
-		Root: root,
+		costs: costs,
+		end:   end,
 	}
 	return s
 }
 
 func (s *CostWhere) EndWithJSON() (j []byte, err error) {
-	stacks := s.End()
+	s.end()
+	j, err = s.ExportJSON()
+	return
+}
+
+func (s *CostWhere) ExportJSON() (j []byte, err error) {
+	stacks := formatCosts(s.costs)
 	j, err = json.Marshal(stacks)
 	err = errors.WithStack(err)
 	return
 }
 
-func (s *CostWhere) End() (stacks []string) {
-	s.Root.Stop()
-	stacks = s.Root.Format("")
-	return
-}
-
-func Mark(ctx *context.Context, topic string) (end func()) {
+func Mark(ctx context.Context) (end func()) {
 	if ctx == nil {
 		end = func() {}
 		return
 	}
-	newCtx, end := Begin(*ctx, topic)
-	*ctx = newCtx
-	return
-}
 
-// StartStack 开始一个栈帧
-func Begin(ctx context.Context, topic string) (newCtx context.Context, end func()) {
-	// 读取父级栈帧
-	parent, ok := readThis(ctx)
+	costs, ok := readThis(ctx)
 	if !ok {
-		newCtx = ctx
 		end = func() {}
 		return
 	}
 
-	// 写入本级栈帧
-	newLayer := newStackLayer(topic)
-	parent.AddChild(newLayer)
-
-	// 将本级栈帧写入 ctx
-	newCtx = writeThis(ctx, newLayer)
-	end = func() { endStack(newCtx) }
-
-	return
-}
-
-func endStack(ctx context.Context) {
-	// 读取栈帧
-	stackLayer, ok := readThis(ctx)
-	if !ok {
-		return
+	startAt := time.Now()
+	end = func() {
+		cost := time.Since(startAt)
+		costs.addCost(4, cost)
 	}
 
-	// 结束栈帧
-	stackLayer.Stop()
+	return
 }

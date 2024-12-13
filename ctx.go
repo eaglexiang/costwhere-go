@@ -1,6 +1,8 @@
 package costwhere
 
-import "context"
+import (
+	"context"
+)
 
 type ctxKeyType string
 
@@ -8,13 +10,13 @@ const (
 	thisLayerKey ctxKeyType = "thisLayerCtx"
 )
 
-func readThis(ctx context.Context) (s *StackLayer, ok bool) {
+func readThis(ctx context.Context) (c *Costs, ok bool) {
 	val := ctx.Value(thisLayerKey)
-	s, ok = val.(*StackLayer)
+	c, ok = val.(*Costs)
 	return
 }
 
-func writeThis(ctx context.Context, s *StackLayer) (dst context.Context) {
-	dst = context.WithValue(ctx, thisLayerKey, s)
+func writeThis(ctx context.Context, c *Costs) (dst context.Context) {
+	dst = context.WithValue(ctx, thisLayerKey, c)
 	return
 }
