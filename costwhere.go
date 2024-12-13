@@ -15,25 +15,28 @@ func Init(ctx context.Context) (newCtx context.Context, c *CostWhere) {
 
 	startAt := time.Now()
 	path := getStackInfo(3)
+	parentPath := getStackInfo(4)
 
 	end := func() {
 		cost := time.Since(startAt)
 		costs.addCostWithPath(path, cost)
 	}
-	c = newCostWhere(costs, end)
+	c = newCostWhere(costs, end, parentPath)
 
 	return
 }
 
 type CostWhere struct {
-	costs *Costs
-	end   func()
+	costs      *Costs
+	end        func()
+	parentPath string
 }
 
-func newCostWhere(costs *Costs, end func()) *CostWhere {
+func newCostWhere(costs *Costs, end func(), parentPath string) *CostWhere {
 	s := &CostWhere{
-		costs: costs,
-		end:   end,
+		costs:      costs,
+		end:        end,
+		parentPath: parentPath,
 	}
 	return s
 }
@@ -45,7 +48,7 @@ func (s *CostWhere) EndWithJSON() (j []byte, err error) {
 }
 
 func (s *CostWhere) ExportJSON() (j []byte, err error) {
-	stacks := formatCosts(s.costs)
+	stacks := formatCosts(s.costs, s.parentPath)
 	j, err = json.Marshal(stacks)
 	err = errors.WithStack(err)
 	return

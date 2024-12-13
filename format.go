@@ -8,7 +8,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func formatCosts(c *Costs) (costs []string) {
+func formatCosts(c *Costs, rootPath string) (costs []string) {
 	arr := lo.Values(c.costs)
 	sort.Slice(arr, func(i, j int) bool {
 		if len(arr[i].Path) < len(arr[j].Path) {
@@ -27,7 +27,8 @@ func formatCosts(c *Costs) (costs []string) {
 	}
 
 	for _, cost := range arr {
-		text := fmt.Sprintf("%s %d", cost.Path, cost.Cost.Milliseconds())
+		path := strings.TrimPrefix(cost.Path, rootPath+";")
+		text := fmt.Sprintf("%s %d", path, cost.Cost.Milliseconds())
 		costs = append(costs, text)
 	}
 
