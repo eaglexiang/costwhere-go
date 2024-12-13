@@ -8,15 +8,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Init(ctx context.Context, topic string) (newCtx context.Context, c *CostWhere) {
+func Init(ctx context.Context) (newCtx context.Context, c *CostWhere) {
 	costs := newCosts()
 
 	newCtx = writeThis(ctx, costs)
 
 	startAt := time.Now()
+	path := getStackInfo(3)
+
 	end := func() {
 		cost := time.Since(startAt)
-		costs.addCost(5, cost)
+		costs.addCostWithPath(path, cost)
 	}
 	c = newCostWhere(costs, end)
 

@@ -34,11 +34,11 @@ func (c *Costs) addCostWithPath(path string, cost time.Duration) {
 		c.costs[path] = costObj
 	}
 	costObj.CalledCount++
-	costObj.TotalCost += cost
+	costObj.Cost += cost
 }
 
 type Cost struct {
 	Path        string
 	CalledCount int
-	TotalCost   time.Duration
+	Cost        time.Duration
 }

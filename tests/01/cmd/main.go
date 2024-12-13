@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/eaglexiang/costwhere-go"
+	"github.com/eaglexiang/costwhere-go/tests/01/x"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func f(sig chan struct{}) {
 	defer func() { sig <- struct{}{} }()
 
 	ctx := context.Background()
-	ctx, cw := costwhere.Init(ctx, "main")
+	ctx, cw := costwhere.Init(ctx)
 	defer func() {
 		stacks, err := cw.EndWithJSON()
 		if err != nil {
@@ -40,27 +41,12 @@ func F0(ctx context.Context) {
 	defer costwhere.Mark(ctx)()
 
 	time.Sleep(100 * time.Millisecond)
-	F2(ctx)
+	x.F2(ctx)
 }
 
 func F1(ctx context.Context) {
 	defer costwhere.Mark(ctx)()
 
 	time.Sleep(1 * time.Second)
-	F2(ctx)
-}
-
-func F2(ctx context.Context) {
-	defer costwhere.Mark(ctx)()
-
-	time.Sleep(100 * time.Millisecond)
-	for i := 0; i < 3; i++ {
-		F3(ctx)
-	}
-}
-
-func F3(ctx context.Context) {
-	defer costwhere.Mark(ctx)()
-
-	time.Sleep(300 * time.Millisecond)
+	x.F2(ctx)
 }
