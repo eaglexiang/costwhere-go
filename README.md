@@ -16,17 +16,21 @@ func main() {
 	ctx := context.Background()
 	ctx, cw := costwhere.Init(ctx, "main")
 	defer func() {
-		stacks := cw.End()
-		buf, _ := json.Marshal(stacks)
-        fmt.Println(string(buf)) // output JSON
+		stacks, err := cw.EndWithJSON()
+		if err != nil {
+			log.Printf("%+v", err)
+			return
+		}
+
+		log.Println(string(stacks)) // output JSON
 	}()
 
 	F(ctx)
 }
 
 func F(ctx context.Context) {
-	ctx, end := costwhere.Begin(ctx, "F")
-	defer end()
+	defer costwhere.Mark(&ctx, "F")()
+
 	time.Sleep(100 * time.Millisecond)
 }
 
