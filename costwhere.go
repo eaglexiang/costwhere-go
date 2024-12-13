@@ -8,8 +8,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Init(ctx context.Context) (newCtx context.Context, c *CostWhere) {
-	costs := newCosts()
+func Init(ctx context.Context, opts ...InitOption) (newCtx context.Context, c *CostWhere) {
+	compressPath := true
+	var pathDict map[string]string
+	if len(opts) > 0 {
+		opt := opts[0]
+
+		if opt.CompressPath != nil {
+			compressPath = *opt.CompressPath
+		}
+		pathDict = opt.PathDict
+	}
+
+	costs := newCosts(compressPath, pathDict)
 
 	newCtx = writeThis(ctx, costs)
 
@@ -19,9 +30,12 @@ func Init(ctx context.Context) (newCtx context.Context, c *CostWhere) {
 
 	end := func() {
 		cost := time.Since(startAt)
-		costs.addCostWithPath(path, cost)
+		text := formatStackInfo(path, compressPath, pathDict)
+		costs.addCostWithPath(text, cost)
 	}
-	c = newCostWhere(costs, end, parentPath)
+
+	text := formatStackInfo(parentPath, compressPath, pathDict)
+	c = newCostWhere(costs, end, text)
 
 	return
 }
@@ -47,10 +61,22 @@ func (s *CostWhere) EndWithJSON() (j []byte, err error) {
 	return
 }
 
-func (s *CostWhere) ExportJSON() (j []byte, err error) {
+func (s *CostWhere) Export() (output Output) {
 	stacks := formatCosts(s.costs, s.parentPath)
-	j, err = json.Marshal(stacks)
+
+	output = Output{
+		Stacks: stacks,
+	}
+
+	return
+}
+
+func (s *CostWhere) ExportJSON() (j []byte, err error) {
+	output := s.Export()
+
+	j, err = json.Marshal(output)
 	err = errors.WithStack(err)
+
 	return
 }
 
@@ -73,4 +99,13 @@ func Mark(ctx context.Context) (end func()) {
 	}
 
 	return
+}
+
+type InitOption struct {
+	CompressPath *bool // 是否压缩路径，默认为 true
+	PathDict     map[string]string
+}
+
+type Output struct {
+	Stacks []string
 }

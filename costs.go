@@ -8,18 +8,29 @@ import (
 type Costs struct {
 	mu    *sync.Mutex
 	costs map[string]*Cost
+
+	compressPath bool
+	pathDict     map[string]string
 }
 
-func newCosts() *Costs {
+func newCosts(compressPath bool, pathDict map[string]string) *Costs {
+	if pathDict == nil {
+		pathDict = make(map[string]string)
+	}
+
 	return &Costs{
 		mu:    new(sync.Mutex),
 		costs: make(map[string]*Cost),
+
+		compressPath: compressPath,
+		pathDict:     pathDict,
 	}
 }
 
 func (c *Costs) addCost(skip int, cost time.Duration) {
 	path := getStackInfo(skip)
-	c.addCostWithPath(path, cost)
+	text := formatStackInfo(path, c.compressPath, c.pathDict)
+	c.addCostWithPath(text, cost)
 }
 
 func (c *Costs) addCostWithPath(path string, cost time.Duration) {

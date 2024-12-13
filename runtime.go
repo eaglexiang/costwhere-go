@@ -3,10 +3,9 @@ package costwhere
 import (
 	"runtime"
 	"slices"
-	"strings"
 )
 
-func getStackInfo(skip int) (pathText string) {
+func getStackInfo(skip int) (path []string) {
 	const maxDepth = 50
 
 	pcs := make([]uintptr, maxDepth)
@@ -18,14 +17,12 @@ func getStackInfo(skip int) (pathText string) {
 		stacks = append(stacks, f)
 	}
 
-	path := make([]string, 0, len(stacks))
+	path = make([]string, 0, len(stacks))
 	for _, frame := range stacks {
 		path = append(path, frame.Function)
 	}
 
 	slices.Reverse(path)
-
-	pathText = strings.Join(path, ";")
 
 	return
 }

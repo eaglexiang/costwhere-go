@@ -41,3 +41,18 @@ func isDirectChild(parent string, child string) (is bool) {
 	is = strings.Count(after, ";") == 1
 	return
 }
+
+func formatStackInfo(path []string, compressPath bool, pathDict map[string]string) (text string) {
+	if compressPath {
+		for i, item := range path {
+			newItem, ok := pathDict[item]
+			if ok {
+				path[i] = newItem
+			}
+		}
+	}
+
+	text = strings.Join(path, ";")
+
+	return
+}
