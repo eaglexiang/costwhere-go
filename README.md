@@ -19,6 +19,7 @@ yay -S flamegraph # archlinux
 
 ```bash
 go install github.com/eaglexiang/costwhere-go/cmd/costwhere
+# go install git.eaglexiang.org/eagle/costwhere/cmd/costwhere
 
 ```
 
