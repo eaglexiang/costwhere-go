@@ -4,6 +4,15 @@ show where your project cost time
 
 ## install
 
+依赖安装
+
+```bash
+yay -S flamegraph # archlinux
+
+```
+
+> 或者直接下载 [text](depts/flamegraph.pl) 到同目录
+
 工具安装
 
 ```bash
@@ -54,15 +63,6 @@ func F(ctx context.Context) {
 }
 
 ```
-
-dependency install
-
-```bash
-yay -S flamegraph # archlinux
-
-```
-
-> [FlameGraph](https://github.com/brendangregg/FlameGraph)
 
 ## use
 
