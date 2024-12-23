@@ -18,8 +18,7 @@ yay -S flamegraph # archlinux
 工具安装
 
 ```bash
-go install github.com/eaglexiang/costwhere-go/cmd/costwhere
-# go install git.eaglexiang.org/eagle/costwhere/cmd/costwhere
+go install github.com/eaglexiang/costwhere-go/cmd/costwhere@latest
 
 ```
 
@@ -27,8 +26,6 @@ go install github.com/eaglexiang/costwhere-go/cmd/costwhere
 
 ```go
 go get github.com/eaglexiang/costwhere-go
-// 或
-// go get git.eaglexiang.org/eagle/costwhere
 
 ```
 
@@ -36,7 +33,6 @@ go get github.com/eaglexiang/costwhere-go
 
 ```go
 import costwhere "github.com/eaglexiang/costwhere-go"
-// import costwhere "git.eaglexiang.org/eagle/costwhere"
 
 func main() {
 	ctx := context.Background()
