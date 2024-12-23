@@ -8,6 +8,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/eaglexiang/costwhere-go"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -51,6 +54,42 @@ func jsonDraw(srcFile string, dstFile string) (err error) {
 	if err != nil {
 		return
 	}
+	if len(buf) == 0 {
+		return
+	}
+
+	switch buf[0] {
+	case '[':
+		err = jsonArrDraw(buf, dstFile)
+	case '{':
+		err = jsonOutputDraw(buf, dstFile)
+	default:
+		err = errors.New("unknown format")
+	}
+
+	return
+}
+
+func jsonOutputDraw(buf []byte, dstFile string) (err error) {
+	output := costwhere.Output{}
+	err = json.Unmarshal(buf, &output)
+	if err != nil {
+		return
+	}
+
+	text := strings.Join(output.Stacks, "\n")
+	err = os.WriteFile("tmp.log", []byte(text), os.ModePerm)
+	if err != nil {
+		return
+	}
+	defer os.Remove("tmp.log")
+
+	err = defaultDraw("tmp.log", dstFile)
+
+	return
+}
+
+func jsonArrDraw(buf []byte, dstFile string) (err error) {
 	lines := []string{}
 	err = json.Unmarshal(buf, &lines)
 	if err != nil {

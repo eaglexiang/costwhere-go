@@ -107,5 +107,5 @@ type InitOption struct {
 }
 
 type Output struct {
-	Stacks []string
+	Stacks []string `json:"stacks"`
 }
