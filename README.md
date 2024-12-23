@@ -69,7 +69,7 @@ func F(ctx context.Context) {
 ## use
 
 ```bash
-costwhere -if="./data.json" -of="./flamegraph.svg"
+costwhere -if="./costwhere.json" -of="./flamegraph.svg"
 # output flamegraph.svg
 
 ```
