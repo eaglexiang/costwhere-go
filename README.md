@@ -4,14 +4,28 @@ show where your project cost time
 
 ## install
 
-tool install
+工具安装
 
 ```bash
 go install github.com/eaglexiang/costwhere-go/cmd/costwhere
 
 ```
 
+包引用
+
 ```go
+go get github.com/eaglexiang/costwhere-go
+// 或
+// go get git.eaglexiang.org/eagle/costwhere
+
+```
+
+代码引用
+
+```go
+import costwhere "github.com/eaglexiang/costwhere-go"
+// import costwhere "git.eaglexiang.org/eagle/costwhere"
+
 func main() {
 	ctx := context.Background()
 
