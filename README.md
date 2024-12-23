@@ -1,8 +1,10 @@
 # costwhere
 
-show where your project cost time
+自定义打点的耗时统计工具，并将结果以火焰图的形式输出。
 
 ## install
+
+> 火焰图生成工具目前只支持 Linux 环境
 
 依赖安装
 
@@ -11,7 +13,7 @@ yay -S flamegraph # archlinux
 
 ```
 
-> 或者直接下载 [text](depts/flamegraph.pl) 到同目录
+> 或者直接下载 [flamegraph.pl](depts/flamegraph.pl) 到同目录
 
 工具安装
 
